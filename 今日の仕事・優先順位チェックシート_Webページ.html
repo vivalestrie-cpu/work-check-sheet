@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今日の仕事・優先順位チェックシート</title>
+<style>
+:root{--teal:#547d79;--teal-dark:#355d59;--pale:#edf5f3;--pink:#f7e9e9;--gold:#c7a86a;--ink:#303b3a;--muted:#687572;--line:#dce6e3;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f8f6f2,#f2f7f5);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--ink);line-height:1.65}
+main{max-width:850px;margin:0 auto;padding:24px 16px 56px}
+header{text-align:center;padding:24px 12px 20px}
+.kicker{font-size:.78rem;letter-spacing:.18em;color:var(--teal);font-weight:700}
+h1{font-size:clamp(1.55rem,5vw,2.15rem);line-height:1.35;margin:8px 0;color:var(--teal-dark)}
+.lead{color:var(--muted);margin:10px auto 0;max-width:560px;font-size:.95rem}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 6px 20px #244b4410}
+h2{font-size:1.1rem;color:var(--teal-dark);margin:0 0 16px;display:flex;align-items:center;gap:9px}
+h2:before{content:"";display:block;width:5px;height:1.15em;border-radius:4px;background:var(--gold)}
+label{display:block;font-weight:650;font-size:.92rem;margin-bottom:6px}
+input[type=text],input[type=date],input[type=number],textarea,select{font:inherit;color:var(--ink);background:#fff;width:100%;border:1px solid #cbd9d5;border-radius:10px;padding:11px 12px;min-width:0}
+textarea{resize:vertical;min-height:78px}
+input:focus,textarea:focus,select:focus{outline:2px solid #a8c9c2;border-color:var(--teal)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:14px}
+.task{border:1px solid var(--line);border-radius:12px;padding:13px;margin:10px 0;background:#fcfdfc}
+.tasktop{display:flex;gap:9px;align-items:flex-start}
+.tasktop .taskname{flex:1}
+.taskopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.inline{display:flex;align-items:center;gap:8px}
+.inline label{margin:0;font-weight:500}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0}
+.pillgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pill{display:flex;gap:9px;align-items:flex-start;padding:11px 12px;background:var(--pale);border-radius:11px;font-size:.9rem}
+.pill label{font-weight:500;margin:0}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{font:inherit;font-weight:700;border:0;border-radius:11px;padding:12px 16px;cursor:pointer}
+.primary{background:var(--teal);color:white;flex:1}
+.secondary{background:var(--pale);color:var(--teal-dark);border:1px solid #cdded9}
+.remove{background:#fbefef;color:#925b5b;padding:7px 10px;font-size:.82rem}
+.status{min-height:1.5em;color:var(--teal-dark);font-size:.9rem}
+footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:24px}
+@media(max-width:560px){.grid,.taskopts,.pillgrid{grid-template-columns:1fr}.panel{padding:16px}.btnrow button{width:100%}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="kicker">MY DAILY WORK PLANNER</div>
+  <h1>今日の仕事・<br>優先順位チェックシート</h1>
+  <p class="lead">今日やることを整理して、落ち着いて一つずつ。<br>入力した内容は、この画面内でまとめてコピーできます。</p>
+</header>
+
+<section class="panel">
+<h2>今日の基本情報</h2>
+<div class="grid">
+  <div class="field"><label for="workdate">日付</label><input id="workdate" type="date"></div>
+  <div class="field"><label for="hours">今日、仕事に使える時間（目安）</label><input id="hours" type="text" placeholder="例：3時間"></div>
+</div>
+<div class="field"><label for="goal">今日のゴール</label><input id="goal" type="text" placeholder="例：午前中に資料を仕上げる"></div>
+</section>
+
+<section class="panel">
+<h2>今日のタスク</h2>
+<p style="color:var(--muted);font-size:.9rem;margin-top:-8px">仕事と締切を入力し、優先順位と完了状況をチェックしましょう。</p>
+<div id="tasks"></div>
+<div class="btnrow"><button class="secondary" type="button" id="addTask">＋ タスクを追加</button></div>
+</section>
+
+<section class="panel">
+<h2>優先順位チェック</h2>
+<div class="pillgrid">
+  <div class="pill"><input id="p1" type="checkbox"><label for="p1">締切が近いものを先に確認した</label></div>
+  <div class="pill"><input id="p2" type="checkbox"><label for="p2">相手を待たせている仕事を確認した</label></div>
+  <div class="pill"><input id="p3" type="checkbox"><label for="p3">重要度と緊急度を分けて考えた</label></div>
+  <div class="pill"><input id="p4" type="checkbox"><label for="p4">迷うことは早めに相談・確認する</label></div>
+  <div class="pill"><input id="p5" type="checkbox"><label for="p5">難しい仕事を小さな作業に分けた</label></div>
+  <div class="pill"><input id="p6" type="checkbox"><label for="p6">予定を詰め込みすぎていない</label></div>
+</div>
+</section>
+
+<section class="panel">
+<h2>振り返り</h2>
+<div class="field"><label for="done">今日できたこと</label><textarea id="done" placeholder="小さなことでもOK"></textarea></div>
+<div class="field"><label for="challenge">困ったこと・確認したいこと</label><textarea id="challenge" placeholder="明日相談すること、気づいたこと"></textarea></div>
+<div class="field"><label for="tomorrow">明日、最初に取りかかること</label><input id="tomorrow" type="text" placeholder="例：昨日の続きの資料作成"></div>
+<div class="field"><label for="memo">メモ</label><textarea id="memo" placeholder="自由記入"></textarea></div>
+</section>
+
+<section class="panel">
+<h2>まとめてコピー</h2>
+<p>入力内容を読みやすいテキストにまとめます。コピーした後、iPhoneのメモやパソコンのメモ帳などに貼り付けて保存してください。</p>
+<div class="btnrow">
+<button class="primary" type="button" id="copy">入力内容をまとめてコピー</button>
+<button class="secondary" type="button" id="previewBtn">まとめを表示</button>
+</div>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+<textarea id="output" hidden aria-label="まとめた内容"></textarea>
+<div class="btnrow" id="fallbackRow" hidden><button class="secondary" type="button" id="selectOutput">表示した文章を選択</button></div>
+</section>
+<footer>入力した内容はこのページ内で処理され、外部サーバーには送信されません。<br>ページを閉じる前に、必要な内容をコピーして保存してください。</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const tasks=$("tasks");
+let nextTaskId=0;
+function addTask(name="",deadline="",priority="中",done=false){
+  const id=++nextTaskId;
+  const el=document.createElement("div"); el.className="task"; el.dataset.id=id;
+  el.innerHTML=`<div class="tasktop"><div class="taskname"><label>やること</label><input type="text" class="tname" placeholder="例：請求書を作成する"></div><div class="inline" style="padding-top:31px"><input type="checkbox" class="tdone" id="tdone${id}"><label for="tdone${id}">完了</label></div></div>
+  <div class="taskopts"><div><label>締切</label><input type="text" class="tdeadline" placeholder="例：今日15時／10月20日"></div><div><label>優先順位</label><select class="tpriority"><option>高</option><option selected>中</option><option>低</option></select></div></div>
+  <div style="text-align:right;margin-top:8px"><button type="button" class="remove">このタスクを削除</button></div>`;
+  el.querySelector(".tname").value=name;el.querySelector(".tdeadline").value=deadline;el.querySelector(".tpriority").value=priority;el.querySelector(".tdone").checked=done;
+  el.querySelector(".remove").addEventListener("click",()=>el.remove());
+  tasks.appendChild(el);
+}
+addTask();addTask();addTask();
+$("addTask").addEventListener("click",()=>addTask());
+function makeText(){
+ const lines=["今日の仕事・優先順位チェックシート","",`日付：${$("workdate").value||"未入力"}`,`仕事に使える時間：${$("hours").value.trim()||"未入力"}`,`今日のゴール：${$("goal").value.trim()||"未入力"}`,"","【今日のタスク】"];
+ const els=[...tasks.querySelectorAll(".task")];
+ if(!els.length) lines.push("・タスクなし");
+ els.forEach((el,i)=>{
+  const name=el.querySelector(".tname").value.trim()||"（未入力）";
+  const deadline=el.querySelector(".tdeadline").value.trim()||"締切未入力";
+  const priority=el.querySelector(".tpriority").value;
+  const done=el.querySelector(".tdone").checked?"完了":"未完了";
+  lines.push(`${i+1}. ${name}`,`   締切：${deadline}／優先順位：${priority}／状況：${done}`);
+ });
+ lines.push("","【優先順位チェック】");
+ const checks=[["p1","締切が近いものを先に確認した"],["p2","相手を待たせている仕事を確認した"],["p3","重要度と緊急度を分けて考えた"],["p4","迷うことは早めに相談・確認する"],["p5","難しい仕事を小さな作業に分けた"],["p6","予定を詰め込みすぎていない"]];
+ checks.forEach(([id,label])=>lines.push(`${$(id).checked?"☑":"☐"} ${label}`));
+ lines.push("","【振り返り】",`今日できたこと：\n${$("done").value.trim()||"未入力"}` ,`困ったこと・確認したいこと：\n${$("challenge").value.trim()||"未入力"}`,`明日、最初に取りかかること：${$("tomorrow").value.trim()||"未入力"}`,`メモ：\n${$("memo").value.trim()||"未入力"}`);
+ return lines.join("\n");
+}
+function showOutput(){ $("output").hidden=false;$("fallbackRow").hidden=false;$("output").value=makeText();$("status").textContent="まとめを表示しました。必要に応じて文章を選択してコピーできます。"; }
+$("previewBtn").addEventListener("click",showOutput);
+$("copy").addEventListener("click",async()=>{
+ const text=makeText();$("output").value=text;
+ try{
+  if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(text);$("status").textContent="コピーしました！メモなどに貼り付けて保存してください。";$("output").hidden=true;$("fallbackRow").hidden=true;}
+  else {showOutput();$("status").textContent="自動コピーが使えないため、表示した文章を選択してコピーしてください。";}
+ }catch(e){showOutput();$("status").textContent="自動コピーが使えないため、表示した文章を選択してコピーしてください。";}
+});
+$("selectOutput").addEventListener("click",()=>{$("output").focus();$("output").select();});
+$("workdate").value=new Date().toLocaleDateString("sv-SE");
+</script>
+</body>
+</html>
